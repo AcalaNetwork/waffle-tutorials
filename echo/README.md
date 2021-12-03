@@ -1,4 +1,4 @@
-# Waffle example: hello-world
+# Waffle example: echo
 
 ## Table of contents
 
