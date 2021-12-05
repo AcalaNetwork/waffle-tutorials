@@ -1,0 +1,61 @@
+Arguments: 
+  /Users/janturk/.asdf/installs/nodejs/16.13.0/bin/node /Users/janturk/.yarn/bin/yarn.js
+
+PATH: 
+  /Users/janturk/.asdf/plugins/nodejs/shims:/Users/janturk/.asdf/installs/nodejs/16.13.0/.npm/bin:/Users/janturk/.asdf/installs/nodejs/16.13.0/bin:/Users/janturk/.yarn/bin:/Users/janturk/.config/yarn/global/node_modules/.bin:/Users/janturk/.asdf/shims:/usr/local/opt/asdf/bin:/Users/janturk/.rbenv/shims:/Users/janturk/.rbenv/shims:/Users/janturk/.rbenv/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Applications/Little Snitch.app/Contents/Components:/opt/X11/bin:/Library/Apple/usr/bin:/Applications/Wireshark.app/Contents/MacOS:/Users/janturk/Library/Application Support/cloud-code/installer/google-cloud-sdk/bin:/Users/janturk/.yarn/bin:/Users/janturk/.config/yarn/global/node_modules/.bin:/Users/janturk/.rbenv/shims:/Users/janturk/.rbenv/bin:/Users/janturk/.cargo/bin
+
+Yarn version: 
+  1.22.15
+
+Node version: 
+  16.13.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Invariant Violation: expected hoisted manifest for "@acala-network/types#@polkadot/api#@polkadot/util-crypto#@polkadot/x-randomvalues"
+      at invariant (/Users/janturk/.yarn/lib/cli.js:2314:15)
+      at _loop2 (/Users/janturk/.yarn/lib/cli.js:95102:9)
+      at PackageHoister.init (/Users/janturk/.yarn/lib/cli.js:95172:19)
+      at PackageLinker.getFlatHoistedTree (/Users/janturk/.yarn/lib/cli.js:48924:20)
+      at PackageLinker.<anonymous> (/Users/janturk/.yarn/lib/cli.js:48935:27)
+      at Generator.next (<anonymous>)
+      at step (/Users/janturk/.yarn/lib/cli.js:310:30)
+      at /Users/janturk/.yarn/lib/cli.js:328:14
+      at new Promise (<anonymous>)
+      at new F (/Users/janturk/.yarn/lib/cli.js:5301:28)
+
+npm manifest: 
+  {
+    "name": "token",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "Jan Turk",
+    "license": "MIT",
+    "devDependencies": {
+      "@openzeppelin/contracts": "^4.4.0",
+      "@types/chai": "^4.2.22",
+      "@types/mocha": "^9.0.0",
+      "chai": "^4.3.4",
+      "ethereum-waffle": "^3.4.0",
+      "mocha": "^9.1.3",
+      "ts-node": "^10.4.0",
+      "typescript": "^4.5.2"
+    },
+    "scripts": {
+      "build": "waffle",
+      "test": "export NODE_ENV=test && mocha -r ts-node/register/transpile-only --timeout 50000 --no-warnings test/**/*.test.ts",
+      "deploy": "ts-node --transpile-only src/deploy.ts"
+    },
+    "dependencies": {
+      "@acala-network/api": "^3.0.2",
+      "@acala-network/bodhi": "^2.1.2"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
