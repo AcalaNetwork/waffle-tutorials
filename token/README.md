@@ -27,14 +27,14 @@ abbriveration:
 To be able to import the `ERC20` from OpenZeppelin, we have to add `@openzeppelin/contracts` as a
 development dependency:
 
-```
+```shell
 yarn add --dev @openzeppelin/contracts
 ```
 
 Now that we have edded the `@openzeppelin/contracts` dependency, we can focus on building our smart
 contract. Your empty smart contract should look like this:
 
-```
+```solidity
 pragma solidity =0.8.9;
 
 contract Token{
@@ -45,21 +45,21 @@ contract Token{
 Import of the `ERC20` from `@openzeppelin/contracts` is done between the `pragma` definition and the
 start od the `contract` block:
 
-```
+```solidity
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 ```
 
 As we now have access to `ERC20.sol` from `@openzeppelin/contracts`, we can set the inheritance of
 our `Token` contract:
 
-```
+```solidity
 contract Token is ERC20 {
 ```
 
 As the `ERC20` already has the full fungible token standard implementation, we only have to add a
 `constructor()` function that sets all of the values:
 
-```
+```solidity
     constructor(uint256 _initialBalance) ERC20("Token", "TKN") public {
         _mint(msg.sender, _initialBalance);
     }
@@ -96,7 +96,7 @@ the `build` directory and contain the compiled smart contract.
 Your test file should be named `Token.test.ts` and the empty test along with the import statement
 should look like this:
 
-```
+```ts
 import { expect, use } from 'chai';
 import { deployContract, solidity } from 'ethereum-waffle';
 import { Contract, ethers } from 'ethers';
@@ -131,7 +131,7 @@ the `wallet` and `user` variables, `deployerAddress` and `userAddress` are used 
 addresses of `deployer` and `user` and deployed contract to `instance`. The `after` action will
 disconnect from the `provider`:
 
-```
+```ts
     let deployer: Signer;
     let user: Signer;
     let instance: Contract;
@@ -154,7 +154,7 @@ There are two describe blocks within `Token` block. The `Deployment` block valid
 contract was deployed as expected and the `Operation` block validates the operation of the smart
 contract:
 
-```
+```ts
     describe("Deployment", () => {
         
     });
@@ -174,7 +174,7 @@ contract:
 5. The `user` account should have `0` balance.
 6. The allowances should be set to `0` when the smart contract is deployed.
 
-```
+```ts
       it("should assing correct name to Token", async () => {
         expect(await instance.name()).to.equal("Token");
       });
@@ -220,7 +220,7 @@ ERC20 tokens:
 
 The contents of the `Operation` block should look like this:
 
-```
+```ts
       describe("Transfer", () => {
         describe("transfer()", () => {
 
@@ -258,7 +258,7 @@ The `transfer()` example validates the following:
 
 These examples should look like this:
 
-```
+```ts
           it("should update balances", async () => {
             const initialUserBalance = await instance.balanceOf(userAddress);
             const initialDeployerBalance = await instance.balanceOf(deployerAddress);
@@ -301,7 +301,7 @@ The `approve()` example validates the following:
 
 These examples should look like this:
 
-```
+```ts
           it("should grant allowance for an amount smaller than own balance", async () => {
             await instance.connect(deployer).approve(userAddress, 1500);
 
@@ -344,7 +344,7 @@ have.
 
 These examples should look like this:
 
-```
+```ts
           it("should increase allowance for a total amount lower than own balance", async () => {
             await instance.connect(deployer).approve(userAddress, 1000);
 
@@ -400,7 +400,7 @@ These examples should look like this:
 
 We can now add the following test cases to our describe block:
 
-```
+```ts
           it("should allow owner to decrease alowance", async () => {
             await instance.connect(deployer).approve(userAddress, 1500);
 
@@ -447,7 +447,7 @@ The `transferFrom()` example validates the following:
 
 These examples should look like this:
 
-```
+```ts
           it("should allow transfer if the allowance is given", async () => {
             await instance.connect(deployer).approve(userAddress, 1500);
 
@@ -792,7 +792,7 @@ With that, our test is ready to be run.
 
 When you run the test with `yarn test`, your tests should pass with the following output:
 
-```
+```bash
 yarn test
 
 
@@ -853,7 +853,7 @@ The `setup.ts` should remain the same as in the [hello-world](../hello-world/src
 `deploy.ts` needs to have the same imports like the hello-world example, except for the smart
 contract we are importing:
 
-```
+```ts
 import { use } from 'chai';
 import { ContractFactory } from 'ethers';
 
@@ -876,7 +876,7 @@ Within the definition of the `main` function, we first retrieve the `wallet` and
 save it to `instance`. The address of the deployed smrt contract is logged into the terminal and we
 log the information about the token as well. Finally we disconnect from the provider:
 
-```
+```ts
     const { wallet, provider } = await setup();
 
     console.log('Deploy Token');
@@ -935,7 +935,7 @@ log the information about the token as well. Finally we disconnect from the prov
 
 Running the `yarn deploy` script should return the following output:
 
-```
+```bash
 yarn deploy
 
 

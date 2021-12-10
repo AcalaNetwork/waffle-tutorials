@@ -25,7 +25,7 @@ emitted.
 
 Your empty smart contract should look like this:
 
-```
+```solidity
 pragma solidity =0.8.9;
 
 contract Echo{
@@ -41,7 +41,7 @@ changed and it will contain the new value as well as the number of times the `ec
 changed. The content of the smart contract, including these two variables and the event, looks like
 this:
 
-```
+```solidity
     string public echo;
     uint echoCount;
 
@@ -51,7 +51,7 @@ this:
 The `constructor` function can set the initial walue of the `echo` variable. Let's set it to
 `Deployed successfully!`, to signal that the smart contract is ready to use:
 
-```
+```solidity
     constructor() {
         echo = "Deployed successfully!";
     }
@@ -62,7 +62,7 @@ function should assign the new value to the `echo` variable, increment the `echo
 `NewEcho` event and return the input string. Let's call this function `scream()` as it will cause an
 echo:
 
-```
+```solidity
     function scream(string memory message) public returns(string memory){
         echo = message;
         echoCount += 1;
@@ -107,7 +107,7 @@ the `build` directory and contain the compiled smart contract.
 Your test file should be named `Echo.test.ts` and the empty test along with the import statement
 should look like this:
 
-```
+```ts
 import { expect, use } from 'chai';
 import { deployContract, solidity } from 'ethereum-waffle';
 import { Contract, ethers } from 'ethers';
@@ -139,7 +139,7 @@ First thing to add to the `Echo` describe block is the `wallet` and `instance` v
 `before` action we assign the `Signer` to the `wallet` variable and deployed contract `instance`.
 The `after` action will disconnect from the `provider`:
 
-```
+```ts
     let wallet: Signer;
     let instance: Contract;
 
@@ -155,7 +155,7 @@ The `after` action will disconnect from the `provider`:
 
 There are two describe blocks within `Echo` block. The `Deployment` block validates that the smart contract was deployed as expected and the `Operation` block validates the operation of the smart contract:
 
-```
+```ts
     describe("Deployment", () => {
         
     });
@@ -168,7 +168,7 @@ There are two describe blocks within `Echo` block. The `Deployment` block valida
 The deployment block only has one example that validates that the `echo` variable is assigned the
 `Deployed successfully!` value:
 
-```
+```ts
       it("returns the right value after the contract is deployed", async () => {
         console.log(instance.address);
         expect(await instance.echo()).to.equal("Deployed successfully!");
@@ -183,7 +183,7 @@ The test cases in the `Operation` should validate the following:
 
 The test cases of the `Operation` describe block should look like this:
 
-```
+```ts
       it("should update the echo variable", async () => {
         await instance.scream("Hello World!");
 
@@ -306,7 +306,7 @@ With that, our test is ready to be run.
 
 When you run the test with `yarn test`, your tests should pass with the following output:
 
-```
+```bash
 yarn test
 
 
@@ -336,7 +336,7 @@ The `setup.ts` should remain the same as in the [hello-world](../hello-world/src
 `deploy.ts` needs to have the same imports like he hello-world example, except for the smart
 contract we are importing:
 
-```
+```ts
 import { use } from 'chai';
 import { ContractFactory } from 'ethers';
 
@@ -359,7 +359,7 @@ Within the definition of the `main` function, we first retrieve the `wallet` and
 it to `instance`. We retrieve the value stored in the `echo` variable, output it to the console,
 change it and output the new value. Finally we disconnect from the provider:
 
-```
+```ts
     const { wallet, provider } = await setup();
 
     console.log('Deploy Echo');
@@ -422,7 +422,7 @@ change it and output the new value. Finally we disconnect from the provider:
 
 Running the `yarn deploy` script should return the following output:
 
-```
+```bash
 yarn deploy
 
 

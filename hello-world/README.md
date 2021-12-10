@@ -25,7 +25,7 @@ Assuming you have yarn installed, we can jump right into creating a new Waffle p
 create a directory for it and then initialize a yarn project within it, as well as add Waffle as a
 development dependency, with the following commands:
 
-```
+```bash
 mkdir hello-world
 cd hello-world
 yarn init --yes
@@ -37,7 +37,7 @@ yarn add --dev ethereum-waffle
 As we will be using Waffle to compile the smart contract, we need to configure it. Add `waffle.json`
 file to the root direcory of this example and paste the following code into it:
 
-```
+```json
 {
   "compilerType": "solcjs",
   "compilerVersion": "0.8.9",
@@ -67,7 +67,7 @@ In this tutorial we will be adding a simple smart contract that only stores one 
 query: `Hello World!`. To do that, we have to create a directory called `contracts` and create a
 `HelloWorld.sol` file within it:
 
-```
+```bash
 mkdir contracts && touch contracts/HelloWorld.sol
 ```
 
@@ -77,7 +77,7 @@ assign the value `Hello World!`. It is important to set the visibility of this v
 so that the compiler builds a getter function for it. The following code should be copy-pasted into
 the `HelloWorld.sol`:
 
-```
+```solidity
 pragma solidity =0.8.9;
 
 contract HelloWorld{
@@ -91,7 +91,7 @@ Now that we have the smart contract ready, we have to compile it. For this, we w
 script to the `package.json`. To do this, we have to add `scripts` section to it. We will be using
 Waffle's compile functionality, so the `scripts` section should look like this:
 
-```
+```json
   "scripts": {
     "build": "waffle"
   }
@@ -105,7 +105,7 @@ contains the compiled smart contract.
 To add a test, for the smart contract we just created, create a `test` directory and within it a
 `HelloWorld.test.ts` file:
 
-```
+```bash
 mkdir test && touch test/HelloWorld.test.ts
 ```
 
@@ -113,14 +113,14 @@ As you can see, we will be using TypeScript to write the tests, so we need to ad
 We need to add two dependencies in order to support it, `ts-node` and `typescript`. Add them as
 development dependencies with:
 
-```
+```bash
 yarn add --dev ts-node typescript
 ```
 
 Now that we added TypeScript to our project, we need to configure it. To do that, create a
 `tsconfig.json` file in the root of the project and copy the following configuration into it:
 
-```
+```json
 {
   "compilerOptions": {
     "declaration": true,
@@ -143,7 +143,7 @@ In addition to the TypeScript, we will be using the `chai` and `mocha` dependenc
 development (for testing) and `@acala-network/bodhi` as well as `@acala-network/api` dependencies,
 to be able to interact with the network. Use the following two lines of code to add them:
 
-```
+```bash
 yarn add --dev @types/chai chai @types/mocha mocha
 yarn add @acala-network/api @acala-network/bodhi
 ```
@@ -151,13 +151,13 @@ yarn add @acala-network/api @acala-network/bodhi
 Now that we have all of the necessary dependencies added to our project, let's start writing the
 test. On the first line of the test, import the `expect` and `use` from `chai` dependency:
 
-```
+```ts
 const { expect, use } = require("chai");
 ```
 
 Import `deployContract` and `solidity` from `ethereum-waffle` and `Contract` from `ethers`:
 
-```
+```ts
 import { deployContract, solidity } from 'ethereum-waffle';
 import { Contract } from 'ethers';
 ```
@@ -166,14 +166,14 @@ Additionally we will need `evmChai`, `Signer` and `TestProvider` from `@acala-ne
 `WsProvider` from `@polkadot/api`. Don't worry about importing `@polkadot/api` package, as it is a
 dependent package of `@acala-network/api` and is already added to the project:
 
-```
+```ts
 import { evmChai, Signer, TestProvider } from '@acala-network/bodhi';
 import { WsProvider } from '@polkadot/api';
 ```
 
 Now let's import the compiled smart contract and tell the test to use `solidity` and `evmChai`:
 
-```
+```ts
 import HelloWorld from '../build/HelloWorld.json';
 
 use(solidity);
@@ -185,7 +185,7 @@ example, we don't need to connect to a RPC node, but we can connect directly to 
 own provider. We will use the `TestProvider`, which will in turn use `WsProvider`, both of which, we
 already imported. We will pass the web socket URL of our local development network to the provider:
 
-```
+```ts
 const provider = new TestProvider({
   provider: new WsProvider("ws://127.0.0.1:9944"),
 });
@@ -194,7 +194,7 @@ const provider = new TestProvider({
 The setup of the test is now done and we can start writing the content of the test. We will be
 wrapping our test within a `describe` block, so add it below the `provider` definition:
 
-```
+```ts
 describe("HelloWorld", () => {
 
 });
@@ -206,7 +206,7 @@ The `describe` block will contain `before` and `after` action. The `before` acti
 `describe` block. The `after` block will disconnect from the `provider`, severing the connection to
 the chain, after the test successfuly execute:
 
-```
+```ts
     let wallet: Signer;
     let instance: Contract;
 
@@ -223,7 +223,7 @@ the chain, after the test successfuly execute:
 To validate that the `helloWorld` variable was set correctly when the contract was deployed, we will
 add an `it` block, in which we assert that the `helloWorld()` getter returns `"Hello World!"`:
 
-```
+```ts
     it("returns the right value after the contract is deployed", async () => {
       expect(await instance.helloWorld()).to.equal("Hello World!");
     });
@@ -274,7 +274,7 @@ With that, our test is ready to be run.
 To be able to run the tests, we will add an additional script to the `package.json`. Add this line
 to the `scripts` section of your `package.json`:
 
-```
+```json
     "test": "export NODE_ENV=test && mocha -r ts-node/register/transpile-only --timeout 50000 --no-warnings test/**/*.test.ts"
 ```
 
@@ -284,7 +284,7 @@ have explicitly set the provider to connect to our local development network.
 
 When you run the test with `yarn test`, your tests should pass with the following output:
 
-```
+```bash
 yarn test
 
 
@@ -309,14 +309,14 @@ a `src` directory and place `deploy.ts` within it. We will be using an additiona
 will give us the artifacts needed to connect to the network, so we need to add a `setup.ts` script
 to the `src` directory as well:
 
-```
+```bash
 mkdir src && touch src/deploy.ts && touch src/setup.ts
 ```
 
 Let's build the `setup.ts` first, as we will be importing it into the `deploy.ts`. First we need to
 import the required artifacts from the dependencies of the project:
 
-```
+```ts
 import { Provider, Signer, TestAccountSigningKey } from '@acala-network/bodhi';
 import { Keyring, WsProvider } from '@polkadot/api';
 import { createTestPairs } from '@polkadot/keyring/testingPairs';
@@ -328,7 +328,7 @@ that they first check for environment variables and if they are missing, they de
 values. In our case the backup web socket URL for the network connection endpoint is hardcoded, but
 the seed is left blank as we will take care of the missing seed in the `setup()` function:
 
-```
+```ts
 const WS_URL = process.env.WS_URL || 'ws://127.0.0.1:9944';
 const seed = process.env.SEED;
 ```
@@ -336,7 +336,7 @@ const seed = process.env.SEED;
 Our `setup.ts` is now prepared for the content. First thing that we should add now is the definition
 of the `setup()` function and its export statement:
 
-```
+```ts
 const setup = async () => {
     
 }
@@ -347,7 +347,7 @@ export default setup;
 The `setup()` function needs to be filled with the content. At its beginning, right after the `{`
 opening bracket, we define the provider:
 
-```
+```ts
     const provider = new Provider({
         provider: new WsProvider(WS_URL),
     })
@@ -356,14 +356,14 @@ opening bracket, we define the provider:
 We need to make sure that the communication with the chain is established, before we try to
 communicate with it, or our communication will be lost:
 
-```
+```ts
     await provider.api.isReady;
 ```
 
 Now we will define the pair. Here is where we make sure that even if there is no seed defined as an
 environment variable, we are still able to deploy to a local development network:
 
-```
+```ts
     let pair: KeyringPair;
     if (seed) {
         const keyring = new Keyring({ type: 'sr25519' });
@@ -376,7 +376,7 @@ environment variable, we are still able to deploy to a local development network
 
 Next we define a `signingKey` with which we are able to sign transactions:
 
-```
+```ts
     const signingKey = new TestAccountSigningKey(provider.api.registry);
     signingKey.addKeyringPair(pair);
 ```
@@ -384,7 +384,7 @@ Next we define a `signingKey` with which we are able to sign transactions:
 Lastly we define the `wallet` and return the `wallet` and `provider`, so that we are able to use
 them in the `deploy.ts`:
 
-```
+```ts
     const wallet = new Signer(provider, pair.address, signingKey);
     return {
         wallet, provider
@@ -436,7 +436,7 @@ This completes our `setup.ts` and allows us to move on to `deploy.ts`.
 To build `deploy.ts`, we need to import the required artifacts from dependencies as well as the
 compiled smart contract and `setup.ts`. We need to specify that is should use `evmChai` as well:
 
-```
+```ts
 import { use } from 'chai';
 import { ContractFactory } from 'ethers';
 
@@ -450,7 +450,7 @@ use(evmChai);
 
 The content of the `deploy.ts` contains definition of `main()` function and its initiation:
 
-```
+```ts
 const main = async () => {
     
 }
@@ -464,7 +464,7 @@ deployed, we use the `helloWorld()` getter function to get the value stored with
 value to the console. Lastly we disconnect from the provider, with which we sever the connection to
 the blockchain:
 
-```
+```ts
     const { wallet, provider } = await setup();
 
     console.log('Deploy HelloWorld');
@@ -513,13 +513,13 @@ All that is left to do is update the `scripts` section in the `package.json` wit
 script. To add this script to your project, place the following line within `scripts` section of the
 `package.json`:
 
-```
+```json
     "deploy": "ts-node --transpile-only src/deploy.ts"
 ```
 
 Running the `yarn deploy` script should return the following output:
 
-```
+```bash
 yarn deploy
 
 
