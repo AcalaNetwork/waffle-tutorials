@@ -14,18 +14,15 @@ import {
 import {
   evmChai,
   Signer,
-  TestProvider,
 } from '@acala-network/bodhi';
-import { WsProvider } from '@polkadot/api';
 
+import { getTestProvider } from '../../utils';
 import Echo from '../build/Echo.json';
 
 use(solidity);
 use(evmChai);
 
-const provider = new TestProvider({
-  provider: new WsProvider("ws://127.0.0.1:9944"),
-});
+const provider = getTestProvider();
 
 const ECHO_ABI = require("../build/Echo.json").abi;
 

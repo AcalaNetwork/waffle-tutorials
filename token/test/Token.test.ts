@@ -15,14 +15,14 @@ import {
 } from '@acala-network/bodhi';
 import { WsProvider } from '@polkadot/api';
 
+import { getTestProvider } from '../../utils';
 import Token from '../build/Token.json';
 
 use(solidity);
 use(evmChai);
 
-const provider = new TestProvider({
-  provider: new WsProvider("ws://127.0.0.1:9944"),
-});
+const provider = getTestProvider();
+
 
 // const provider = new MockProvider();
 
