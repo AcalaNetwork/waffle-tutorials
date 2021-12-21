@@ -42,7 +42,7 @@ test_all() {
   done
 
   echo "+++++++++++++++++++++++"
-  echo "waffle test failed: $failed"
+  echo "Number of failed waffle tests: $failed"
   echo "+++++++++++++++++++++++"
 }
 
