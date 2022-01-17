@@ -7,7 +7,8 @@ build_all() {
     -t waffle-tutorial-hello-world \
     -t waffle-tutorial-echo \
     -t waffle-tutorial-token \
-    -t waffle-tutorial-nft'
+    -t waffle-tutorial-nft \
+    -t waffle-tutorial-precompiled-token'
 }
 
 rebuild_all() {
@@ -15,7 +16,8 @@ rebuild_all() {
     -t waffle-tutorial-hello-world \
     -t waffle-tutorial-echo \
     -t waffle-tutorial-token \
-    -t waffle-tutorial-nft'
+    -t waffle-tutorial-nft \
+    -t waffle-tutorial-precompiled-token'
 }
 
 test_all() {
@@ -24,6 +26,7 @@ test_all() {
     "echo"
     "token"
     "NFT"
+    "precompiled-token"
   )
 
   ROOT=$(pwd)
