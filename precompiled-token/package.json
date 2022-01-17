@@ -1,0 +1,26 @@
+{
+  "name": "waffle-tutorial-precompiled-token",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Jan Turk",
+  "license": "MIT",
+  "devDependencies": {
+    "@acala-network/contracts": "^3.0.0",
+    "@openzeppelin/contracts": "^4.4.0",
+    "@types/chai": "^4.2.22",
+    "@types/mocha": "^9.0.0",
+    "chai": "^4.3.4",
+    "ethereum-waffle": "^3.4.0",
+    "mocha": "^9.1.3",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  },
+  "scripts": {
+    "test": "export NODE_ENV=test && mocha -r ts-node/register/transpile-only --timeout 100000 --no-warnings test/**/*.test.ts",
+    "get-info": "ts-node --transpile-only src/getACAinfo.ts"
+  },
+  "dependencies": {
+    "@acala-network/api": "^3.0.2",
+    "@acala-network/bodhi": "^2.1.2"
+  }
+}
