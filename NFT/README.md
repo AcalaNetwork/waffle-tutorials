@@ -143,16 +143,12 @@ import { deployContract, solidity } from 'ethereum-waffle';
 import { Contract } from 'ethers';
 
 import { evmChai, Signer, TestProvider } from '@acala-network/bodhi';
-import { WsProvider } from '@polkadot/api';
 
 import NFT from '../build/NFT.json';
+import { getTestProvider } from '../utils/setup';
 
 use(solidity);
 use(evmChai);
-
-const provider = new TestProvider({
-  provider: new WsProvider("ws://127.0.0.1:9944"),
-});
 
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -161,13 +157,14 @@ describe("NFT", () => {
 });
 ```
 
-First thing to add to the `NFT` describe block are the `deployer`, `user`, `instance`,
-`deployerAddress` and `userAddress` variables. Within the `before` action we assign the `Signer` to
-the `wallet` and `user` variables, `deployerAddress` and `userAddress` are used to store the
-addresses of `deployer` and `user` and deployed contract to `instance`. The `after` action will
-disconnect from the `provider`:
+First thing to add to the `NFT` describe block are the `provider`, `deployer`, `user`, `instance`,
+`deployerAddress` and `userAddress` variables. Within the `before` action we assign the
+`TestProvider` to `provider`, `Signer` to the `wallet` and `user` variables, `deployerAddress` and
+`userAddress` are used to store the addresses of `deployer` and `user` and deployed contract to
+`instance`. The `after` action will disconnect from the `provider`:
 
 ```ts
+    let provider: TestProvider;
     let deployer: Signer;
     let user: Signer;
     let instance: Contract;
@@ -175,6 +172,7 @@ disconnect from the `provider`:
     let userAddress: String;
 
     before(async () => {
+      provider = await getTestProvider();
       [deployer, user] = await provider.getWallets();
       instance = await deployContract(deployer, NFT);
       deployerAddress = await deployer.getAddress();
@@ -558,20 +556,17 @@ With that, our test is ready to be run.
     import { Contract, ethers } from 'ethers';
 
     import { evmChai, Signer, TestProvider } from '@acala-network/bodhi';
-    import { WsProvider } from '@polkadot/api';
 
     import Token from '../build/Token.json';
+    import { getTestProvider } from '../utils/setup';
 
     use(solidity);
     use(evmChai);
 
-    const provider = new TestProvider({
-        provider: new WsProvider("ws://127.0.0.1:9944"),
-    });
-
     const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
     describe("NFT", () => {
+        let provider: TestProvider;
         let deployer: Signer;
         let user: Signer;
         let instance: Contract;
@@ -579,6 +574,7 @@ With that, our test is ready to be run.
         let userAddress: String;
 
         beforeEach(async () => {
+          provider = await getTestProvider();
           [deployer, user] = await provider.getWallets();
           instance = await deployContract(deployer, NFT);
           deployerAddress = await deployer.getAddress();
@@ -899,7 +895,7 @@ import { ContractFactory } from 'ethers';
 import { evmChai } from '@acala-network/bodhi';
 
 import NFT from '../build/NFT.json';
-import setup from './setup';
+import { setup } from '../utils/setup';
 
 use(evmChai);
 
@@ -949,7 +945,7 @@ token's URI to the comsole. Finally we disconnect from the provider:
     import { evmChai } from '@acala-network/bodhi';
 
     import NFT from '../build/NFT.json';
-    import setup from './setup';
+    import { setup } from '../utils/setup';
 
     use(evmChai);
 

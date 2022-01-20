@@ -4,7 +4,7 @@ import { ContractFactory } from 'ethers';
 import { evmChai } from '@acala-network/bodhi';
 
 import NFT from '../build/NFT.json';
-import setup from './setup';
+import { setup } from '../utils/setup';
 
 use(evmChai);
 
