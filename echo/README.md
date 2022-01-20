@@ -116,13 +116,10 @@ import { evmChai, Signer, TestProvider } from '@acala-network/bodhi';
 import { WsProvider } from '@polkadot/api';
 
 import Echo from '../build/Echo.json';
+import { getTestProvider } from '../utils/setup';
 
 use(solidity);
 use(evmChai);
-
-const provider = new TestProvider({
-  provider: new WsProvider("ws://127.0.0.1:9944"),
-});
 
 const ECHO_ABI = require("../build/Echo.json").abi;
 
@@ -135,15 +132,18 @@ In addition to the similar import statements to the ones in the
 [hello-world](../hello-world/test/HelloWorld.test.ts) the `ECHO_ABI` is also imported. It is used
 for validating the `NewEcho` event.
 
-First thing to add to the `Echo` describe block is the `wallet` and `instance` variables. Within the
-`before` action we assign the `Signer` to the `wallet` variable and deployed contract `instance`.
-The `after` action will disconnect from the `provider`:
+First thing to add to the `Echo` describe block are the `provider`, `wallet` and `instance`
+variables. Within the `before` action we assign the`TestProvider` to the `provider`, `Signer` to
+the `wallet` variable and deployed contract `instance`. The `after` action will disconnect from the
+`provider`:
 
 ```ts
+    let provider: TestProvider;
     let wallet: Signer;
     let instance: Contract;
 
     before(async () => {
+      provider = await getTestProvider();
       [wallet] = await provider.getWallets();
       instance = await deployContract(wallet, Echo);
     });
@@ -237,21 +237,20 @@ With that, our test is ready to be run.
     import { WsProvider } from '@polkadot/api';
 
     import Echo from '../build/Echo.json';
+    import { getTestProvider } from '../utils/setup';
 
     use(solidity);
     use(evmChai);
 
-    const provider = new TestProvider({
-        provider: new WsProvider("ws://127.0.0.1:9944"),
-    });
-
     const ECHO_ABI = require("../build/Echo.json").abi;
 
     describe("Echo", () => {
+        let provider: TestProvider;
         let wallet: Signer;
         let instance: Contract;
 
         before(async () => {
+            provider = await getTestProvider();
             [wallet] = await provider.getWallets();
             instance = await deployContract(wallet, Echo);
         });
@@ -343,7 +342,7 @@ import { ContractFactory } from 'ethers';
 import { evmChai } from '@acala-network/bodhi';
 
 import Echo from '../build/Echo.json';
-import setup from './setup';
+import { setup } from '../utils/setup';
 
 use(evmChai);
 
@@ -390,7 +389,7 @@ change it and output the new value. Finally we disconnect from the provider:
     import { evmChai } from '@acala-network/bodhi';
 
     import Echo from '../build/Echo.json';
-    import setup from './setup';
+    import { setup } from '../utils/setup';
 
     use(evmChai);
 
