@@ -14,23 +14,24 @@ import {
 import {
   evmChai,
   Signer,
+  TestProvider,
 } from '@acala-network/bodhi';
 
-import { getTestProvider } from '../../utils';
 import Echo from '../build/Echo.json';
+import { getTestProvider } from '../utils/setup';
 
 use(solidity);
 use(evmChai);
 
-const provider = getTestProvider();
-
 const ECHO_ABI = require("../build/Echo.json").abi;
 
 describe("Echo", () => {
+    let provider: TestProvider;
     let wallet: Signer;
     let instance: Contract;
 
     before(async () => {
+      provider = await getTestProvider();
       [wallet] = await provider.getWallets();
       instance = await deployContract(wallet, Echo);
     });
