@@ -4,7 +4,7 @@ import { ContractFactory } from 'ethers';
 import { evmChai } from '@acala-network/bodhi';
 
 import HelloWorld from '../build/HelloWorld.json';
-import setup from './setup';
+import { setup } from '../utils/setup';
 
 use(evmChai);
 
