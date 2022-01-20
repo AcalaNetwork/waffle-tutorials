@@ -13,22 +13,17 @@ import {
   Signer,
   TestProvider,
 } from '@acala-network/bodhi';
-import { WsProvider } from '@polkadot/api';
 
-import { getTestProvider } from '../../utils';
 import Token from '../build/Token.json';
+import { getTestProvider } from '../utils/setup';
 
 use(solidity);
 use(evmChai);
 
-const provider = getTestProvider();
-
-
-// const provider = new MockProvider();
-
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 describe("Token", () => {
+    let provider: TestProvider;
     let deployer: Signer;
     let user: Signer;
     let instance: Contract;
@@ -36,6 +31,7 @@ describe("Token", () => {
     let userAddress: String;
 
     before(async () => {
+      provider = await getTestProvider();
       [deployer, user] = await provider.getWallets();
       instance = await deployContract(deployer, Token, [1234567890]);
       deployerAddress = await deployer.getAddress();
