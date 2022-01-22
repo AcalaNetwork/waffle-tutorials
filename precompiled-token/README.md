@@ -45,7 +45,8 @@ in stead of `ContractFactory`, because the contract is already deployed to the n
 `ADDRESS` utility of `@acala-network/contracts` dependency is imported and it holds the value of
 all of the address of the predeployed smart contracts in the Acala EVM+. Additionally we are
 importing the compiled `Token` smart contract from the `@acala-network/contracts` dependency,
-which we will use to instantiate the smart contract.
+which we will use to instantiate the smart contract and `getTestProvider` utility, which allows
+us to overwrite the endpoint to which the tests are connecting if necessary.
 
 **NOTE: The ACA ERC20 token mirrors the balance of the native ACA currency, so you are able
 to transfer ACA within your smart contract the same way you would transfer a non-native ERC20
@@ -60,33 +61,32 @@ import { Contract } from 'ethers';
 import ADDRESS from "@acala-network/contracts/utils/Address"
 
 import { evmChai, Signer, TestProvider } from '@acala-network/bodhi';
-import { WsProvider } from '@polkadot/api';
 
-const Token = require('@acala-network/contracts/build/contracts/Token.json');
+import Token from '@acala-network/contracts/build/contracts/Token.json';
+import { getTestProvider } from "../utils/setup";
 
 use(solidity);
 use(evmChai);
-
-const provider = new TestProvider({
-  provider: new WsProvider("ws://127.0.0.1:9944"),
-});
 
 describe("PrecompiledToken", () => {
 
 });
 ```
 
-First thing to add to the `PrecompiledToken` describe block are the `deployer`, `instance` and
-`deployerAddress` variables. Within the `before` action we assign the `Signer` to the `deployer`
-variable. `deployerAddress` is used to store the address of `deployer` and deployed contract is
-instantiated to `instance`. The `after` action will disconnect from the `provider`:
+First thing to add to the `PrecompiledToken` describe block are the `provider`, `deployer`,
+`instance` and `deployerAddress` variables. Within the `before` action we assign the
+`TestProvider` to `provider`,  `Signer` to the `deployer` variable. `deployerAddress` is used to
+store the address of `deployer` and deployed contract is instantiated to `instance`. The `after`
+action will disconnect from the `provider`:
 
 ```ts
+    let provider: TestProvider;
     let deployer: Signer;
     let instance: Contract;
     let deployerAddress: String;
 
     before(async () => {
+      provider = await getTestProvider();
       [deployer] = await provider.getWallets();
       instance = new Contract(ADDRESS.ACA, Token.abi, deployer);
       deployerAddress = await deployer.getAddress();
@@ -139,23 +139,21 @@ With that, our test is ready to be run.
     import ADDRESS from "@acala-network/contracts/utils/Address"
 
     import { evmChai, Signer, TestProvider } from '@acala-network/bodhi';
-    import { WsProvider } from '@polkadot/api';
 
-    const Token = require('@acala-network/contracts/build/contracts/Token.json');
+    import Token from '@acala-network/contracts/build/contracts/Token.json';
+    import { getTestProvider } from "../utils/setup";
 
     use(solidity);
     use(evmChai);
 
-    const provider = new TestProvider({
-      provider: new WsProvider("ws://127.0.0.1:9944"),
-    });
-
     describe("PrecompiledToken", () => {
+        let provider: TestProvider;
         let deployer: Signer;
         let instance: Contract;
         let deployerAddress: String;
 
         before(async () => {
+          provider = await getTestProvider();
           [deployer] = await provider.getWallets();
           instance = new Contract(ADDRESS.ACA, Token.abi, deployer);
           deployerAddress = await deployer.getAddress();
@@ -215,18 +213,19 @@ add a script that interacts with the predeployed smart contract and log some val
 console.
 
 Let's name our script `getACAinfo.ts` and import `ACA` from the `ADDRESS` utility, `Contract` from
-`ethers` and `Token` precompile from `@acala-network/contracts`. The script along with the imports
-should look like this:
+`ethers`, `formatUnits` from `ethers/libs/utils` and `Token` precompile from
+`@acala-network/contracts`. The script along with the imports should look like this:
 
 ```ts
 import { use } from 'chai';
 import { Contract } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import ADDRESS from "@acala-network/contracts/utils/Address"
 
 import { evmChai } from '@acala-network/bodhi';
 
-const Token = require('@acala-network/contracts/build/contracts/Token.json');
-import setup from './setup';
+import Token from '@acala-network/contracts/build/contracts/Token.json';
+import { setup } from '../utils/setup';
 
 use(evmChai);
 
@@ -270,44 +269,15 @@ disconnect from the provider:
     provider.api.disconnect();
 ```
 
-As we have the information about how many decimal spaces the token uses, we can add a formatting
-function below the definition of the `main()` function and use it to format the `totalSupply`
-and own balance. Let's call it `balanceFormatting` and prepare it for formatting in case the
-balance is higher than 1 and lower than 1:
+As we have the information about how many decimal spaces the token uses, we can add the output of
+the formatted values to the script. We will use the `formatUnits` utility form `ethers` that we
+imported. We have to pass the value to be formatted, as a string value, and the numebr of decimal
+spaces that the value includes. We can add these formatted balances to the `main()` function at the
+bottom of its definition, above the `provider.api.disconnect()`:
 
 ```ts
-function balanceFormatting (balance: string, decimals: number): string {
-    let balanceLength = balance.length;
-    let output = "";
-
-    if(balanceLength > decimals){
-        for(let i = 0; i < (balanceLength - decimals); i++){
-            output += balance[i];
-        }
-        output += ".";
-        for(let i = (balanceLength - decimals); i < balanceLength; i++){
-            output += balance[i];
-        }
-    } else {
-        output += "0."
-        for(let i = 0; i < (decimals - balanceLength); i++){
-            output += "0";
-        }
-        output += balance;
-    }
-    return output;
-}
-```
-
-Finally we can add these formatted balances to the `main()` function at the bottom of its
-definition, above the `provider.api.disconnect()`:
-
-```ts
-    const formattedSupply = balanceFormatting(totalSupply.toString(), decimals);
-    const formattedBalance = balanceFormatting(balance.toString(), decimals);
-
-    console.log("Formatted total supply of %s token is: %s %s", name, formattedSupply, symbol);
-    console.log("Formatted %s token balance of %s is: %s %s", name, walletAddress, formattedBalance, symbol);
+    console.log("Formatted total supply of %s token is: %s %s", name, formatUnits(totalSupply.toString(), decimals), symbol);
+    console.log("Formatted %s token balance of %s is: %s %s", name, walletAddress, formatUnits(balance.toString(), decimals), symbol);
 ```
 
 <details>
@@ -315,12 +285,13 @@ definition, above the `provider.api.disconnect()`:
 
     import { use } from 'chai';
     import { Contract } from 'ethers';
-    import ADDRESS from "@acala-network/contracts/utils/Address"
+    import { formatUnits } from 'ethers/lib/utils';
+    import ADDRESS from '@acala-network/contracts/utils/Address';
 
     import { evmChai } from '@acala-network/bodhi';
 
-    const Token = require('@acala-network/contracts/build/contracts/Token.json');
-    import setup from './setup';
+    import Token from '@acala-network/contracts/build/contracts/Token.json';
+    import { setup } from '../utils/setup';
 
     use(evmChai);
 
@@ -348,35 +319,10 @@ definition, above the `provider.api.disconnect()`:
         console.log("Token total supply:", totalSupply.toString());
         console.log("Token balance of %s is: %s", walletAddress, balance.toString());
 
-        const formattedSupply = balanceFormatting(totalSupply.toString(), decimals);
-        const formattedBalance = balanceFormatting(balance.toString(), decimals);
-
-        console.log("Formatted total supply of %s token is: %s %s", name, formattedSupply, symbol);
-        console.log("Formatted %s token balance of %s is: %s %s", name, walletAddress, formattedBalance, symbol);
+        console.log("Formatted total supply of %s token is: %s %s", name, formatUnits(totalSupply.toString(), decimals), symbol);
+        console.log("Formatted %s token balance of %s is: %s %s", name, walletAddress, formatUnits(balance.toString(), decimals), symbol);
 
         provider.api.disconnect();
-    }
-
-    function balanceFormatting (balance: string, decimals: number): string {
-        let balanceLength = balance.length;
-        let output = "";
-
-        if(balanceLength > decimals){
-            for(let i = 0; i < (balanceLength - decimals); i++){
-                output += balance[i];
-            }
-            output += ".";
-            for(let i = (balanceLength - decimals); i < balanceLength; i++){
-                output += balance[i];
-            }
-        } else {
-            output += "0."
-            for(let i = 0; i < (decimals - balanceLength); i++){
-                output += "0";
-            }
-            output += balance;
-        }
-        return output;
     }
 
     main()
@@ -407,11 +353,11 @@ Token address: 0x0000000000000000000100000000000000000000
 Token name: Acala
 Token symbol: ACA
 Token decimal spaces: 12
-Token total supply: 50100004700000000000
-Token balance of 0x82A258cb20E2ADB4788153cd5eb5839615EcE9a0 is: 8999999986219144000
-Formatted total supply of Acala token is: 50100004.700000000000 ACA
-Formatted Acala token balance of 0x82A258cb20E2ADB4788153cd5eb5839615EcE9a0 is: 8999999.986219144000 ACA
-Done in 4.55s.
+Token total supply: 40110004600000000000
+Token balance of 0x82A258cb20E2ADB4788153cd5eb5839615EcE9a0 is: 8999996847749727322
+Formatted total supply of Acala token is: 40110004.6 ACA
+Formatted Acala token balance of 0x82A258cb20E2ADB4788153cd5eb5839615EcE9a0 is: 8999996.847749727322 ACA
+Done in 4.79s.
 ```
 
 ## Summary

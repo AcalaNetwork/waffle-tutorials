@@ -1,11 +1,12 @@
 import { use } from 'chai';
 import { Contract } from 'ethers';
-import ADDRESS from "@acala-network/contracts/utils/Address"
+import { formatUnits } from 'ethers/lib/utils';
+import ADDRESS from '@acala-network/contracts/utils/Address';
 
 import { evmChai } from '@acala-network/bodhi';
 
-const Token = require('@acala-network/contracts/build/contracts/Token.json');
-import setup from './setup';
+import Token from '@acala-network/contracts/build/contracts/Token.json';
+import { setup } from '../utils/setup';
 
 use(evmChai);
 
@@ -33,35 +34,10 @@ const main = async () => {
     console.log("Token total supply:", totalSupply.toString());
     console.log("Token balance of %s is: %s", walletAddress, balance.toString());
 
-    const formattedSupply = balanceFormatting(totalSupply.toString(), decimals);
-    const formattedBalance = balanceFormatting(balance.toString(), decimals);
-
-    console.log("Formatted total supply of %s token is: %s %s", name, formattedSupply, symbol);
-    console.log("Formatted %s token balance of %s is: %s %s", name, walletAddress, formattedBalance, symbol);
+    console.log("Formatted total supply of %s token is: %s %s", name, formatUnits(totalSupply.toString(), decimals), symbol);
+    console.log("Formatted %s token balance of %s is: %s %s", name, walletAddress, formatUnits(balance.toString(), decimals), symbol);
 
     provider.api.disconnect();
-}
-
-function balanceFormatting (balance: string, decimals: number): string {
-    let balanceLength = balance.length;
-    let output = "";
-
-    if(balanceLength > decimals){
-        for(let i = 0; i < (balanceLength - decimals); i++){
-            output += balance[i];
-        }
-        output += ".";
-        for(let i = (balanceLength - decimals); i < balanceLength; i++){
-            output += balance[i];
-        }
-    } else {
-        output += "0."
-        for(let i = 0; i < (decimals - balanceLength); i++){
-            output += "0";
-        }
-        output += balance;
-    }
-    return output;
 }
 
 main()
