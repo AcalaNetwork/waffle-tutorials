@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "@acala-network/api": "^3.0.2",
-    "@acala-network/bodhi": "^2.1.2"
+    "@acala-network/bodhi": "^2.2.2"
   }
 }
