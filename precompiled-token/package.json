@@ -20,7 +20,7 @@
     "get-info": "ts-node --transpile-only src/getACAinfo.ts"
   },
   "dependencies": {
-    "@acala-network/api": "^3.0.2",
+    "@acala-network/api": "~4.0.1",
     "@acala-network/bodhi": "^2.2.2"
   }
 }
