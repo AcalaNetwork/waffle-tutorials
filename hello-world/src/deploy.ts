@@ -9,19 +9,19 @@ import { setup } from '../utils/setup';
 use(evmChai);
 
 const main = async () => {
-    const { wallet, provider } = await setup();
+  const { wallet, provider } = await setup();
 
-    console.log('Deploy HelloWorld');
+  console.log('Deploy HelloWorld');
 
-    const instance = await ContractFactory.fromSolidity(HelloWorld).connect(wallet).deploy();
+  const instance = await ContractFactory.fromSolidity(HelloWorld).connect(wallet).deploy();
 
-    console.log("HelloWorld address:", instance.address);
+  console.log('HelloWorld address:', instance.address);
 
-    const variable = await instance.helloWorld();
+  const variable = await instance.helloWorld();
 
-    console.log("Stored variable:", variable);
+  console.log('Stored variable:', variable);
 
-    provider.api.disconnect();
-}
+  provider.api.disconnect();
+};
 
-main()
+main();

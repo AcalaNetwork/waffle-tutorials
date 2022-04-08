@@ -9,25 +9,25 @@ import { setup } from '../utils/setup';
 use(evmChai);
 
 const main = async () => {
-    const { wallet, provider } = await setup();
+  const { wallet, provider } = await setup();
 
-    console.log('Deploy Echo');
+  console.log('Deploy Echo');
 
-    const instance = await ContractFactory.fromSolidity(Echo).connect(wallet).deploy();
+  const instance = await ContractFactory.fromSolidity(Echo).connect(wallet).deploy();
 
-    console.log("Echo address:", instance.address);
+  console.log('Echo address:', instance.address);
 
-    const variable = await instance.echo();
+  const variable = await instance.echo();
 
-    console.log("Deployment status:", variable);
+  console.log('Deployment status:', variable);
 
-    await instance.scream("Ready for use!");
+  await instance.scream('Ready for use!');
 
-    const ready = await instance.echo();
+  const ready = await instance.echo();
 
-    console.log("Contract status:", ready);
+  console.log('Contract status:', ready);
 
-    provider.api.disconnect();
-}
+  provider.api.disconnect();
+};
 
-main()
+main();
