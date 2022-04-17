@@ -5,7 +5,7 @@
   "author": "Jan Turk",
   "license": "MIT",
   "devDependencies": {
-    "@acala-network/contracts": "^3.0.0",
+    "@acala-network/contracts": "^4.2.0",
     "@openzeppelin/contracts": "^4.4.0",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
@@ -20,7 +20,7 @@
     "get-info": "ts-node --transpile-only src/getACAinfo.ts"
   },
   "dependencies": {
-    "@acala-network/api": "^3.0.2",
-    "@acala-network/bodhi": "^2.1.2"
+    "@acala-network/api": "~4.0.1",
+    "@acala-network/bodhi": "^2.2.2"
   }
 }
