@@ -110,7 +110,7 @@ mkdir test && touch test/HelloWorld.test.ts
 ```
 
 As you can see, we will be using TypeScript to write the tests, so we need to add it to the project.
-We need to add two dependencies in order to support it, `ts-node` and `typescript`. Add them as
+We need to add two dependencies in order to support it, `typescript-node` and `typescript`. Add them as
 development dependencies with:
 
 ```bash
@@ -118,7 +118,7 @@ yarn add --dev ts-node typescript
 ```
 
 Now that we added TypeScript to our project, we need to configure it. To do that, create a
-`tsconfig.json` file in the root of the project and copy the following configuration into it:
+`typescriptconfig.json` file in the root of the project and copy the following configuration into it:
 
 ```json
 {
@@ -157,16 +157,17 @@ We will call this provider setup utility setup, so we have to create a `setupp.t
 mkdir utils && touch utils/setup.ts
 ```
 
-At the top of `setup.ts` we will import the `TestProvider`, `TestAccountSigningKey`, `Provider`
+At the top of `setup.ts` we will import the `TestProvider`, `AccountSigningKey`, `Provider`
 and `Signer` from `@acala-network/bodhi`, `WsProvider` and `Keyring` from `@polkadot/api`,
-`ApiOptions` and `KeyringPair` from `@polkadot/api/types` and `createTestPairs` from
-`@polkadot/keyring/testingPairs`. We will define ther default web socket RPC URL that can be
-overwritten:
+`KeyringPair` from `@polkadot/keyring/types`, `ApiOptions` from `@polkadot/api/types` and
+`createTestPairs` from `@polkadot/keyring/testingPairs`. We will define ther default web socket RPC
+URL that can be overwritten:
 
-```ts
-import { TestProvider, TestAccountSigningKey, Provider, Signer } from '@acala-network/bodhi';
+```typescript
+import { TestProvider, AccountSigningKey, Provider, Signer } from '@acala-network/bodhi';
 import { WsProvider, Keyring } from '@polkadot/api';
-import { ApiOptions, KeyringPair } from '@polkadot/api/types';
+import { KeyringPair } from '@polkadot/keyring/types';
+import { ApiOptions } from '@polkadot/api/types';
 import { createTestPairs } from '@polkadot/keyring/testingPairs';
 
 const WS_URL = process.env.WS_URL || 'ws://127.0.0.1:9944';
@@ -180,8 +181,8 @@ we will use the `WsProvider`. We have to ensure that the provider is connected t
 network before we try to use it. After the provider is successfully connected to the network
 we will output the `url` to the console and return the  `provider`:
 
-```ts
-export const getTestProvider = async (urlOverwrite?: string, opts?: ApiOptions): TestProvider => {
+```typescript
+export const getTestProvider = async (urlOverwrite?: string, opts?: ApiOptions): Promise<TestProvider> => {
   const url = urlOverwrite || WS_URL;
 
   const provider = new TestProvider({
@@ -200,27 +201,27 @@ export const getTestProvider = async (urlOverwrite?: string, opts?: ApiOptions):
 Now that we have all of the necessary dependencies added to our project, let's start writing the
 test. On the first line of the test, import the `expect` and `use` from `chai` dependency:
 
-```ts
+```typescript
 const { expect, use } = require("chai");
 ```
 
 Import `deployContract` and `solidity` from `ethereum-waffle` and `Contract` from `ethers`:
 
-```ts
+```typescript
 import { deployContract, solidity } from 'ethereum-waffle';
 import { Contract } from 'ethers';
 ```
 
 Additionally we will need `evmChai`, `Signer` and `TestProvider` from `@acala-network/bodhi`:
 
-```ts
+```typescript
 import { evmChai, Signer, TestProvider } from '@acala-network/bodhi';
 ```
 
 Now let's import the compiled smart contract, `getTestProvider` from `setup` utility and tell
 the test to use `solidity` and `evmChai`:
 
-```ts
+```typescript
 import HelloWorld from '../build/HelloWorld.json';
 import { getTestProvider } from "../utils/setup"
 
@@ -231,7 +232,7 @@ use(evmChai);
 The setup of the test is now done and we can start writing the content of the test. We will be
 wrapping our test within a `describe` block, so add it below the `use()` instructions:
 
-```ts
+```typescript
 describe("HelloWorld", () => {
 
 });
@@ -244,7 +245,7 @@ instantitate the `TestProvider` using the `getTestProvider` from `setup` utility
 `describe` block. The `after` block will disconnect from the `provider`, severing the connection to
 the chain, after the test successfuly execute:
 
-```ts
+```typescript
   let provider: TestProvider;
   let wallet: Signer;
   let instance: Contract;
@@ -263,7 +264,7 @@ the chain, after the test successfuly execute:
 To validate that the `helloWorld` variable was set correctly when the contract was deployed, we will
 add an `it` block, in which we assert that the `helloWorld()` getter returns `"Hello World!"`:
 
-```ts
+```typescript
   it("returns the right value after the contract is deployed", async () => {
     console.log(instance.address);
     expect(await instance.helloWorld()).to.equal("Hello World!");
@@ -354,7 +355,7 @@ We have to add another export to the `setup` utility, to be able to use the netw
 script. First thing that we should add to the `setup.ts` is the definition of the `setup()`,
 which accepts one parameter allowing us to overwrite the eb socker URL of the RPC endpoint:
 
-```ts
+```typescript
 export const setup = async (urlOverwrite?: string) => {
     
 };
@@ -364,14 +365,14 @@ The `setup()` function needs to be filled with the content. At its beginning, ri
 opening bracket, we define the `url` constant, which sets the web socker URL of the provider, and
 `seed` that accepts the seed phrase, if one is defined as an enviroment variaible: 
 
-```ts
+```typescript
     const url = urlOverwrite || WS_URL;
     const seed = process.env.SEED;
 ```
 
 Then we define the provider:
 
-```ts
+```typescript
     const provider = new Provider({
         provider: new WsProvider(url)
     });
@@ -380,14 +381,14 @@ Then we define the provider:
 We need to make sure that the communication with the chain is established, before we try to
 communicate with it, or our communication will be lost:
 
-```ts
+```typescript
     await provider.api.isReady;
 ```
 
 Now we will define the pair. Here is where we make sure that even if there is no seed defined as an
 environment variable, we are still able to deploy to a local development network:
 
-```ts
+```typescript
     let pair: KeyringPair;
     if (seed) {
         const keyring = new Keyring({ type: 'sr25519' });
@@ -400,15 +401,15 @@ environment variable, we are still able to deploy to a local development network
 
 Next we define a `signingKey` with which we are able to sign transactions:
 
-```ts
-    const signingKey = new TestAccountSigningKey(provider.api.registry);
+```typescript
+    const signingKey = new AccountSigningKey(provider.api.registry);
     signingKey.addKeyringPair(pair);
 ```
 
 Lastly we define the `wallet` and return the `wallet`, `provider` and `pair`, so that we are able to use
 them in the `deploy.ts`:
 
-```ts
+```typescript
     const wallet = new Signer(provider, pair.address, signingKey);
     return {
         wallet, provider
@@ -420,59 +421,60 @@ This completes our `setup()` export of `utils/setup.ts` and allows us to move on
 <details>
     <summary>Your utils/setup.ts should look like this:</summary>
 
-    import { TestProvider, TestAccountSigningKey, Provider, Signer } from '@acala-network/bodhi';
+    import { TestProvider, AccountSigningKey, Provider, Signer } from '@acala-network/bodhi';
     import { WsProvider, Keyring } from '@polkadot/api';
-    import { ApiOptions, KeyringPair } from '@polkadot/api/types';
+    import { KeyringPair } from '@polkadot/keyring/types';
+    import { ApiOptions } from '@polkadot/api/types';
     import { createTestPairs } from '@polkadot/keyring/testingPairs';
 
     const WS_URL = process.env.WS_URL || 'ws://127.0.0.1:9944';
 
-    export const getTestProvider = async (urlOverwrite?: string, opts?: ApiOptions): TestProvider => {
-        const url = urlOverwrite || WS_URL;
-    
-        const provider = new TestProvider({
-            provider: new WsProvider(url),
-            ...opts
-        });
+    export const getTestProvider = async (urlOverwrite?: string, opts?: ApiOptions): Promise<TestProvider> => {
+      const url = urlOverwrite || WS_URL;
 
-        await provider.api.isReady;
-    
-        console.log(`Test provider is connected to ${url}`);
-    
-        return provider;
+      const provider = new TestProvider({
+        provider: new WsProvider(url),
+        ...opts
+      });
+
+      await provider.api.isReady;
+
+      console.log(`Test provider is connected to ${url}`);
+
+      return provider;
     };
 
     export const setup = async (urlOverwrite?: string) => {
-        const url = urlOverwrite || WS_URL;
-        const seed = process.env.SEED;
-    
-        const provider = new Provider({
-            provider: new WsProvider(url)
-        });
-    
-        await provider.api.isReady;
-    
-        console.log(`Provider is connected to ${url}`);
-    
-        let pair: KeyringPair;
-        if (seed) {
-            const keyring = new Keyring({ type: 'sr25519' });
-            pair = keyring.addFromUri(seed);
-        } else {
-            const testPairs = createTestPairs();
-            pair = testPairs.alice;
-        }
+      const url = urlOverwrite || WS_URL;
+      const seed = process.env.SEED;
 
-        const signingKey = new TestAccountSigningKey(provider.api.registry);
-        signingKey.addKeyringPair(pair);
-    
-        const wallet = new Signer(provider, pair.address, signingKey);
+      const provider = new Provider({
+        provider: new WsProvider(url)
+      });
 
-        return {
-            wallet,
-            provider,
-            pair
-        };
+      await provider.api.isReady;
+
+      console.log(`Provider is connected to ${url}`);
+
+      let pair: KeyringPair;
+      if (seed) {
+        const keyring = new Keyring({ type: 'sr25519' });
+        pair = keyring.addFromUri(seed);
+      } else {
+        const testPairs = createTestPairs();
+        pair = testPairs.alice;
+      }
+
+      const signingKey = new AccountSigningKey(provider.api.registry);
+      signingKey.addKeyringPair(pair);
+
+      const wallet = new Signer(provider, pair.address, signingKey);
+
+      return {
+        wallet,
+        provider,
+        pair
+      };
     };
 
 </details>
@@ -480,7 +482,7 @@ This completes our `setup()` export of `utils/setup.ts` and allows us to move on
 To build `deploy.ts`, we need to import the required artifacts from dependencies as well as the
 compiled smart contract and `utils/setup.ts`. We need to specify that it should use `evmChai` as well:
 
-```ts
+```typescript
 import { use } from 'chai';
 import { ContractFactory } from 'ethers';
 
@@ -494,7 +496,7 @@ use(evmChai);
 
 The content of the `deploy.ts` contains definition of `main()` function and its initiation:
 
-```ts
+```typescript
 const main = async () => {
     
 }
@@ -508,7 +510,7 @@ deployed, we use the `helloWorld()` getter function to get the value stored with
 value to the console. Lastly we disconnect from the provider, with which we sever the connection to
 the blockchain:
 
-```ts
+```typescript
     const { wallet, provider } = await setup();
 
     console.log('Deploy HelloWorld');
