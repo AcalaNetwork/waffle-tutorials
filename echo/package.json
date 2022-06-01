@@ -4,6 +4,19 @@
   "main": "index.js",
   "author": "Jan Turk",
   "license": "MIT",
+  "resolutions": {
+    "@polkadot/api-base": "^8.6.2",
+    "@polkadot/api-derive": "^8.6.2",
+    "@polkadot/api-augment": "^8.6.2",
+    "@polkadot/api": "^8.6.2",
+    "@polkadot/rpc-augment": "^8.6.2",
+    "@polkadot/rpc-core": "^8.6.2",
+    "@polkadot/rpc-provider": "^8.6.2",
+    "@polkadot/types": "^8.6.2",
+    "@polkadot/types-codec": "^8.6.2",
+    "@polkadot/types-create": "^8.6.2",
+    "@polkadot/types-known": "^8.6.2"
+  },
   "devDependencies": {
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
@@ -20,6 +33,6 @@
   },
   "dependencies": {
     "@acala-network/api": "^4.1.1",
-    "@acala-network/bodhi": "^2.4.11"
+    "@acala-network/bodhi": "^2.4.12"
   }
 }
