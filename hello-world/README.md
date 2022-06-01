@@ -110,7 +110,7 @@ mkdir test && touch test/HelloWorld.test.ts
 ```
 
 As you can see, we will be using TypeScript to write the tests, so we need to add it to the project.
-We need to add two dependencies in order to support it, `typescript-node` and `typescript`. Add them as
+We need to add two dependencies in order to support it, `ts-node` and `typescript`. Add them as
 development dependencies with:
 
 ```bash
@@ -118,7 +118,7 @@ yarn add --dev ts-node typescript
 ```
 
 Now that we added TypeScript to our project, we need to configure it. To do that, create a
-`typescriptconfig.json` file in the root of the project and copy the following configuration into it:
+`tsconfig.json` file in the root of the project and copy the following configuration into it:
 
 ```json
 {
