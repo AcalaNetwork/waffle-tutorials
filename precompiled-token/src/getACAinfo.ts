@@ -1,7 +1,7 @@
 import { use } from 'chai';
 import { Contract } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
-import ADDRESS from '@acala-network/contracts/utils/Address';
+import ADDRESS from '@acala-network/contracts/utils/AcalaAddress';
 
 import { evmChai } from '@acala-network/bodhi';
 
