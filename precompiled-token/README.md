@@ -58,7 +58,7 @@ The test file with import statements and an empty test should look like this:
 import { expect, use } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { Contract } from 'ethers';
-import ADDRESS from "@acala-network/contracts/utils/AcalaAddress"
+import ADDRESS from "@acala-network/contracts/utils/MandalaAddress"
 
 import { evmChai, Signer, TestProvider } from '@acala-network/bodhi';
 
@@ -136,7 +136,7 @@ With that, our test is ready to be run.
     import { expect, use } from 'chai';
     import { solidity } from 'ethereum-waffle';
     import { Contract } from 'ethers';
-    import ADDRESS from "@acala-network/contracts/utils/AcalaAddress"
+    import ADDRESS from "@acala-network/contracts/utils/MandalaAddress"
 
     import { evmChai, Signer, TestProvider } from '@acala-network/bodhi';
 
@@ -220,7 +220,7 @@ Let's name our script `getACAinfo.ts` and import `ACA` from the `ADDRESS` utilit
 import { use } from 'chai';
 import { Contract } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
-import ADDRESS from "@acala-network/contracts/utils/AcalaAddress"
+import ADDRESS from "@acala-network/contracts/utils/MandalaAddress"
 
 import { evmChai } from '@acala-network/bodhi';
 
@@ -286,7 +286,7 @@ bottom of its definition, above the `provider.api.disconnect()`:
     import { use } from 'chai';
     import { Contract } from 'ethers';
     import { formatUnits } from 'ethers/lib/utils';
-    import ADDRESS from '@acala-network/contracts/utils/AcalaAddress';
+    import ADDRESS from '@acala-network/contracts/utils/MandalaAddress';
 
     import { evmChai } from '@acala-network/bodhi';
 
